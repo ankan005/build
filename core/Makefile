@@ -878,10 +878,11 @@ else
 	VENDOR_STRIPPED_MODULE_STAGING_DIR :=
 endif
 
-ifneq ($(BOARD_DO_NOT_STRIP_VENDOR_RAMDISK_MODULES),true)
-  VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR := $(call intermediates-dir-for,PACKAGING,depmod_vendor_ramdisk_stripped)
-else
-  VENDOR_RAMDISK_STRIPPED_MODULE_STAGING_DIR :=
+ifneq ($(strip $(BOARD_ODM_KERNEL_MODULES))$(strip $(BOARD_ODM_KERNEL_MODULES_ARCHIVE)),)
+  ifeq ($(BOARD_ODM_KERNEL_MODULES_LOAD),)
+    BOARD_ODM_KERNEL_MODULES_LOAD := $(BOARD_ODM_KERNEL_MODULES)
+  endif
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_ODM_KERNEL_MODULES),$(TARGET_OUT_ODM),odm,$(call intermediates-dir-for,PACKAGING,depmod_odm),$(BOARD_ODM_KERNEL_MODULES_LOAD),modules.load,$(BOARD_ODM_KERNEL_MODULES_ARCHIVE),))
 endif
 
 BOARD_KERNEL_MODULE_DIRS += top
